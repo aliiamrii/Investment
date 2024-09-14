@@ -5,9 +5,10 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.models import db  # Adjust according to your app structure
-print(db.metadata.tables)
+from app.models import db
 target_metadata = db.metadata
+
+
 
 
 

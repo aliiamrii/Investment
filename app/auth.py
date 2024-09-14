@@ -2,15 +2,24 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.models import User, db
 from app.schemas import UserCreateSchema
+from flask_jwt_extended import get_jwt
+from flask import jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from datetime import datetime
+
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    referral_code = data.get('referral_code')  # Accept referral code from request
+
+    # Validate only username and password with UserCreateSchema
+    validated_data = UserCreateSchema(**data)
+
+    username = validated_data.username
+    password = validated_data.password
+    referral_code = data.get('referral_code')  # Extract referral code separately
 
     if User.query.filter_by(username=username).first():
         return jsonify({"msg": "Username already exists"}), 400
@@ -33,8 +42,9 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"msg": "User created successfully"}), 201
+    access_token = create_access_token(identity=new_user.id)
 
+    return jsonify({"msg": "User created successfully", "access_token": access_token}), 201
 
 @auth.route('/login', methods=['POST'])
 def login():
@@ -67,7 +77,8 @@ def profile():
         "referral_code": user.referral_code,
         "referred_users": referred_users
     }
-    return jsonify(response), 200
+    return jsonify({"msg":"Login successfully","access_token":response}), 200
+
 
 
 
@@ -75,4 +86,15 @@ def profile():
 @jwt_required()
 def protected():
     current_user_id = get_jwt_identity()
-    return jsonify(logged_in_as=current_user_id), 200
+    
+    # Get the JWT data
+    token_data = get_jwt()
+    
+    # Extract the 'exp' field from the token and convert it to a human-readable format
+    expiration_timestamp = token_data['exp']
+    expiration_datetime = datetime.utcfromtimestamp(expiration_timestamp).strftime('%Y-%m-%d %H:%M:%S')
+    
+    return jsonify({
+        "logged_in_as": current_user_id,
+        "expires_at": expiration_datetime
+    }), 200
