@@ -1,0 +1,36 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
+
+# Dependency directories
+venv/
+.env/
+requirements.txt  # If you are using a requirements file
+
+# Alembic migration folders
+alembic/versions/
+
+# MacOS-specific files
+.DS_Store
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Other system files
+*.swp
+*.swo
+

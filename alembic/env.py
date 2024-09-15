@@ -4,8 +4,19 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+<<<<<<< HEAD
 from app.models import db
 target_metadata=db.metadata
+=======
+
+from app.models import db
+target_metadata = db.metadata
+
+
+
+
+
+>>>>>>> 6873958458b7c396f826c02bb2bd911cc5fba600
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
